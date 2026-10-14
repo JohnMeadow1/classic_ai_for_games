@@ -5,6 +5,7 @@
 
 [node name="boid" type="Node2D" unique_id=1774474643]
 script = ExtResource("1")
+debug = true
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=1077011258]
 texture = ExtResource("2")

@@ -1,0 +1,182 @@
+[gd_scene format=3 uid="uid://bxybipfmfsfgb"]
+
+[ext_resource type="Script" uid="uid://bkm18ryv31r7o" path="res://ui.gd" id="1_fyqef"]
+
+[node name="UI" type="CanvasLayer" unique_id=154477144]
+script = ExtResource("1_fyqef")
+
+[node name="VBox" type="VBoxContainer" parent="." unique_id=1248848477]
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="HBox" type="HBoxContainer" parent="VBox" unique_id=1730790036]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 100
+
+[node name="VBox" type="VBoxContainer" parent="VBox/HBox" unique_id=1775442633]
+layout_mode = 2
+
+[node name="view_range" type="SpinBox" parent="VBox/HBox/VBox" unique_id=308677674]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1000.0
+value = 150.0
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox/view_range" unique_id=827191022]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 4.0
+offset_right = 170.0
+offset_bottom = 27.0
+text = "view range"
+
+[node name="separation_range" type="SpinBox" parent="VBox/HBox/VBox" unique_id=891469378]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 1000.0
+value = 100.0
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox/separation_range" unique_id=1625934542]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 4.0
+offset_right = 183.0
+offset_bottom = 27.0
+text = "separ. range"
+
+[node name="friction" type="SpinBox" parent="VBox/HBox/VBox" unique_id=541991445]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 0.5
+step = 0.01
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox/friction" unique_id=174837230]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 4.0
+offset_right = 153.0
+offset_bottom = 27.0
+text = "friction"
+
+[node name="range_fov" type="SpinBox" parent="VBox/HBox/VBox" unique_id=688236160]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 360.0
+step = 10.0
+value = 270.0
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox/range_fov" unique_id=1078011596]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 4.0
+offset_right = 162.0
+offset_bottom = 27.0
+text = "range_fov"
+
+[node name="separation_fov" type="SpinBox" parent="VBox/HBox/VBox" unique_id=1881930274]
+unique_name_in_owner = true
+layout_mode = 2
+max_value = 360.0
+step = 10.0
+value = 360.0
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox/separation_fov" unique_id=862230234]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 4.0
+offset_right = 201.0
+offset_bottom = 27.0
+text = "separation_fov"
+
+[node name="max_speed" type="SpinBox" parent="VBox/HBox/VBox" unique_id=1423117577]
+unique_name_in_owner = true
+layout_mode = 2
+min_value = 10.0
+max_value = 1000.0
+value = 200.0
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox/max_speed" unique_id=649232643]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 4.0
+offset_right = 170.0
+offset_bottom = 27.0
+text = "max speed"
+
+[node name="min_speed" type="SpinBox" parent="VBox/HBox/VBox" unique_id=990826592]
+unique_name_in_owner = true
+layout_mode = 2
+value = 10.0
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox/min_speed" unique_id=1857911986]
+layout_mode = 0
+offset_left = 86.0
+offset_top = 4.0
+offset_right = 167.0
+offset_bottom = 27.0
+text = "min speed"
+
+[node name="VBox2" type="VBoxContainer" parent="VBox/HBox" unique_id=459235840]
+layout_mode = 2
+
+[node name="alignment" type="SpinBox" parent="VBox/HBox/VBox2" unique_id=1464163523]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.1
+value = 10.0
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox2/alignment" unique_id=606837019]
+layout_mode = 0
+offset_left = 85.0
+offset_top = 4.0
+offset_right = 164.0
+offset_bottom = 27.0
+text = "alignment"
+
+[node name="cohesion" type="SpinBox" parent="VBox/HBox/VBox2" unique_id=1759725742]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.1
+value = 8.0
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox2/cohesion" unique_id=2090377771]
+layout_mode = 0
+offset_left = 85.0
+offset_top = 4.0
+offset_right = 155.0
+offset_bottom = 27.0
+text = "cohesion"
+
+[node name="separation" type="SpinBox" parent="VBox/HBox/VBox2" unique_id=800366270]
+unique_name_in_owner = true
+layout_mode = 2
+step = 0.1
+value = 12.0
+
+[node name="Label" type="Label" parent="VBox/HBox/VBox2/separation" unique_id=88611826]
+layout_mode = 0
+offset_left = 85.0
+offset_top = 4.0
+offset_right = 169.0
+offset_bottom = 27.0
+text = "separation"
+
+[node name="hide_ui" type="CheckButton" parent="VBox" unique_id=2028718845]
+layout_mode = 2
+size_flags_horizontal = 0
+button_pressed = true
+text = "Show UI"
+
+[node name="space_wrap" type="CheckButton" parent="VBox" unique_id=1961587335]
+layout_mode = 2
+size_flags_horizontal = 0
+text = "space wrap"
+
+[node name="count" type="Label" parent="VBox" unique_id=1660103877]
+unique_name_in_owner = true
+layout_mode = 2
+text = "100"
+
+[connection signal="toggled" from="VBox/hide_ui" to="." method="_on_hide_ui_toggled"]
+[connection signal="toggled" from="VBox/space_wrap" to="." method="_on_space_wrap_toggled"]

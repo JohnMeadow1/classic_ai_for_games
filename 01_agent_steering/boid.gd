@@ -3,11 +3,17 @@ extends Node2D
 @export var debug = false
 var border_margin = 100
 
-var velocity    := Vector2()
+var velocity    := Vector2.ZERO
 var angle       := 0.0
+var facing      := Vector2.ZERO
 
-var steering    := Vector2()
-var desired_velocity := Vector2()
+var steering    := Vector2.ZERO
+var desired_velocity := Vector2.ZERO
+
+var wander_angle  := 0.0
+var circle_offset := 10.0
+var circle_radius := 0.0
+var circle_center := Vector2.ZERO
 
 #var debug_separation := PackedVector2Array()
 #var debug_cohesion   := PackedVector2Array()
@@ -18,37 +24,58 @@ func _ready():
 	var margin = 20
 	position.x = randf_range( margin, get_viewport().size.x - margin )
 	position.y = randf_range( margin, get_viewport().size.y - margin )
-	angle = randf_range(0.0, 360.0)
-	velocity = Vector2( cos(angle), sin(angle) ) * Globals.min_speed
+	velocity = Vector2.RIGHT.rotated(randf()*TAU) * Globals.min_speed
 	flock_id = randi() % 2
 	$Sprite2D.modulate = Color.from_hsv(float(flock_id) * 0.25, 1.0, 1.0, 1.0)
 
 func _process(delta: float) -> void:
 	angle = velocity.angle()
+	facing = velocity.normalized()
 	$Sprite2D.rotation = angle
 	
-	velocity += arrival( get_global_mouse_position() )
+	#----------- tak
+	steering = arrival( get_global_mouse_position() )
+	steering += wander()
+	#----------- albo tak
+	#steering = wander()
+	#-----------
+	
+	velocity += steering
+	velocity = velocity.limit_length(Globals.max_speed)
+	velocity -= velocity * delta
+	handle_screen_edge()
+	
 	position += velocity * delta
 
 	if debug: queue_redraw()
 
+func wander() -> Vector2:
+	circle_offset = 0.0
+	circle_radius = Globals.separation_range
+	circle_center = facing * (circle_radius + circle_offset)
+	wander_angle += (randf() - 0.5) * 0.5
+	var direction = circle_center + Vector2.RIGHT.rotated(wander_angle) * circle_radius
+	#var speed_clamped = min (direction.length(), Globals.max_speed) 
+	#desired_velocity = direction.normalized() * speed_clamped
+	desired_velocity = direction
+	return desired_velocity
+
+func arrival(in_position:Vector2) -> Vector2:
+	var direction := position.direction_to(in_position)
+	var distance := position.distance_to(in_position)
+	var arvial_range :float = Globals.view_range
+	var arival_progress = min(distance / arvial_range, 1.0)
+	desired_velocity = direction * Globals.max_speed * arival_progress
+	return desired_velocity
+
 func seek(in_position:Vector2) -> Vector2:
 	desired_velocity = position.direction_to(in_position) * Globals.max_speed
-	steering = desired_velocity - velocity
-	return steering
+	return desired_velocity
 
+	
 func flee(in_position:Vector2) -> Vector2:
-	return Vector2.ZERO
-	
-	
-func arrival(in_position:Vector2) -> Vector2:
-	var arvial_range :float = Globals.view_range
-	var distance := position.distance_to(in_position) 
-	var arival_progress :float =  min(distance / arvial_range, 1.0)
-	desired_velocity = position.direction_to(in_position) * Globals.max_speed * arival_progress
-	steering = desired_velocity - velocity
-	return steering
-
+	desired_velocity = in_position.direction_to(position) * Globals.max_speed
+	return desired_velocity
 
 func handle_screen_edge():
 	if Globals.space_wrap:
@@ -74,12 +101,14 @@ func handle_screen_edge():
 func _draw():
 	if debug:
 		draw_circle( Vector2.ZERO, Globals.view_range, Color(1.0, 1.0, 1.0, 0.1))
-		#draw_poly_arc(Globals.view_range, velocity.angle(), Globals.view_range_fov, 27, Color(1.0, 1.0, 1.0, 0.1))
-		#draw_poly_arc(Globals.separation_range, velocity.angle(), Globals.separation_range_fov, 27, Color(1.0, 0.0, 0.0, 0.1))
-
+		draw_circle( circle_center, Globals.separation_range, Color(0.0, 1.0, 1.0, 0.1))
+		draw_line(circle_center, circle_center+Vector2.RIGHT.rotated(wander_angle) * circle_radius, Color(1.0, 1.0, 1.0, 0.2), 2.0)
+		
+		#draw_line(circle_center, circle_center + Vector2.RIGHT.rotated(wander_angle) * circle_radius, Color.WHITE, 2.0)
+		#draw_circle(Vector2.RIGHT.rotated(wander_angle) * circle_radius, 4.0, Color.WHITE)
 		draw_vector( steering, Color( 0.0, 1.0, 0.0, 0.3 ), 3 )
 		draw_vector( desired_velocity, Color( 0.0, 0.0, 1.0, 0.3 ), 3 )
-
+		
 func draw_vector( vector, color, arrow_size ):
 	if vector.length_squared() > 1:
 		var points    = []

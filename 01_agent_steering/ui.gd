@@ -1,4 +1,4 @@
-extends Node
+extends CanvasLayer
 
 func _ready():
 	randomize()
