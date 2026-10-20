@@ -1,11 +1,36 @@
 [gd_scene format=3 uid="uid://bfqd288uxrood"]
 
+[ext_resource type="Script" uid="uid://c41rnivvdqvm6" path="res://obstacles.gd" id="1_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://c1ecxyptgl5xr" path="res://boid.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://bxybipfmfsfgb" path="res://ui.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://5p5ufm4ihnow" path="res://Obstacle.tscn" id="3_h2yge"]
 
 [node name="main" type="Node" unique_id=1845128593]
 
+[node name="Obstacle" type="Node2D" parent="." unique_id=1633840079]
+unique_name_in_owner = true
+script = ExtResource("1_1bvp3")
+metadata/_edit_lock_ = true
+
+[node name="obstacle" parent="Obstacle" unique_id=796290372 instance=ExtResource("3_h2yge")]
+position = Vector2(934, 343)
+
+[node name="obstacle2" parent="Obstacle" unique_id=1172701671 instance=ExtResource("3_h2yge")]
+position = Vector2(907, 245)
+
+[node name="obstacle3" parent="Obstacle" unique_id=26363703 instance=ExtResource("3_h2yge")]
+position = Vector2(854, 187)
+
+[node name="obstacle4" parent="Obstacle" unique_id=1090553365 instance=ExtResource("3_h2yge")]
+position = Vector2(487, 470)
+
+[node name="obstacle5" parent="Obstacle" unique_id=722872990 instance=ExtResource("3_h2yge")]
+position = Vector2(755, 516)
+
 [node name="UI" parent="." unique_id=154477144 instance=ExtResource("2_h2yge")]
 
-[node name="boid" parent="." unique_id=80527138 instance=ExtResource("2")]
+[node name="World2D" type="Node2D" parent="." unique_id=223259670]
+
+[node name="boid" parent="World2D" unique_id=80527138 instance=ExtResource("2")]
 position = Vector2(490.789, 271.91)
+is_predator = true

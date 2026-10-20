@@ -18,3 +18,5 @@ var max_speed := 100.0
 var min_speed := 10.0
 
 var space_wrap := false
+
+var obstacle_node :Node2D

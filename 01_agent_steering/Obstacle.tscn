@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://5p5ufm4ihnow"]
+
+[ext_resource type="Texture2D" uid="uid://cm3ehjos6kefo" path="res://sprites/light_03.png" id="1_nfn2k"]
+[ext_resource type="Script" uid="uid://cxui0i1wakhwx" path="res://obstacle.gd" id="1_qaun2"]
+
+[node name="Node2D" type="Node2D" unique_id=1172701671]
+script = ExtResource("1_qaun2")
+
+[node name="Light03" type="Sprite2D" parent="." unique_id=796290372]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("1_nfn2k")
