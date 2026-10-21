@@ -1,9 +1,10 @@
 [gd_scene format=3 uid="uid://bfqd288uxrood"]
 
 [ext_resource type="Script" uid="uid://c41rnivvdqvm6" path="res://obstacles.gd" id="1_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://c1ecxyptgl5xr" path="res://boid.tscn" id="2"]
+[ext_resource type="PackedScene" uid="uid://c1ecxyptgl5xr" path="res://Botek.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://bxybipfmfsfgb" path="res://ui.tscn" id="2_h2yge"]
 [ext_resource type="PackedScene" uid="uid://5p5ufm4ihnow" path="res://Obstacle.tscn" id="3_h2yge"]
+[ext_resource type="Script" uid="uid://lyiblxomyq48" path="res://World2D.gd" id="4_controller"]
 
 [node name="main" type="Node" unique_id=1845128593]
 
@@ -30,7 +31,10 @@ position = Vector2(755, 516)
 [node name="UI" parent="." unique_id=154477144 instance=ExtResource("2_h2yge")]
 
 [node name="World2D" type="Node2D" parent="." unique_id=223259670]
+script = ExtResource("4_controller")
+BOIDS_COUNT = 1
 
 [node name="boid" parent="World2D" unique_id=80527138 instance=ExtResource("2")]
 position = Vector2(490.789, 271.91)
 is_predator = true
+behavior = 0

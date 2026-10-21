@@ -1,0 +1,12 @@
+[gd_scene format=3 uid="uid://c1ecxyptgl5xr"]
+
+[ext_resource type="Script" uid="uid://dvxiuwjn1kaqw" path="res://Botek.gd" id="1_04i8o"]
+[ext_resource type="Texture2D" uid="uid://6hrhyfeytxty" path="res://sprites/arrow3.png" id="2_3veu7"]
+
+[node name="boid" type="Node2D" unique_id=1774474643]
+script = ExtResource("1_04i8o")
+debug = true
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1077011258]
+texture = ExtResource("2_3veu7")
+offset = Vector2(2, 0)
