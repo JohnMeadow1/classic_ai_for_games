@@ -26,7 +26,7 @@ var is_selected := false
 var path_index := 0
 
 func _ready():
-	velocity = Vector2.RIGHT.rotated(randf()*TAU) * Steering.max_speed
+	velocity = Vector2.RIGHT.rotated(randf()*TAU) * Steering.max_speed / 60.0
 	update_behavior_label()
 
 func get_behavior_name() -> String:
