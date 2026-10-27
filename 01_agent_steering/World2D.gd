@@ -94,8 +94,7 @@ func set_selected_agent(agent: Botek) -> void:
 	if is_instance_valid(selected_agent):
 		selected_agent.is_selected = true
 		selected_agent.queue_redraw()
-		if selected_only:
-			selected_agent.behavior = current_behavior
+		current_behavior = selected_agent.behavior
 	selected_agent_changed.emit(selected_agent)
 
 func set_behavior(new_behavior: Botek.Behavior) -> void:
