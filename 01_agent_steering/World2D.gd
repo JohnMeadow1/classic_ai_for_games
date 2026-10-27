@@ -52,10 +52,12 @@ func spawn_agent(spawn_position: Vector2, notify := true) -> Botek:
 		return null
 
 	new_agent.position = spawn_position
-	new_agent.flock_id = randi() % 2
-	new_agent.behavior = current_behavior
+	if new_agent.is_predator:
+		new_agent.behavior = new_agent.Behavior.PURSUIT
+	else:
+		new_agent.behavior = new_agent.Behavior.EVADE
 	new_agent.collision_avoidance_enabled = collision_avoidance_enabled
-	new_agent.debug = false
+	#new_agent.debug = false
 	add_child(new_agent)
 	register_agent(new_agent, notify)
 	refresh_targets()
@@ -103,13 +105,18 @@ func set_behavior(new_behavior: Botek.Behavior) -> void:
 	if new_behavior < Botek.Behavior.SEEK or new_behavior > Botek.Behavior.EVADE:
 		push_warning("Ignoring unknown steering behavior: %d" % new_behavior)
 		return
+		
 	current_behavior = new_behavior
 	if selected_only:
 		if is_instance_valid(selected_agent):
 			selected_agent.behavior = current_behavior
+			selected_agent.set_predator(new_behavior == Botek.Behavior.PURSUIT)
+
 	else:
 		for agent in agents:
 			agent.behavior = current_behavior
+			agent.set_predator(new_behavior == Botek.Behavior.PURSUIT)
+
 
 func set_selected_only(enabled: bool) -> void:
 	selected_only = enabled

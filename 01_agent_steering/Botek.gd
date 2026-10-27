@@ -3,7 +3,6 @@ class_name Botek
 
 enum Behavior { SEEK, FLEE, ARRIVAL, WANDER, PURSUIT, EVADE }
 
-@export var debug = false
 var border_margin = 100
 
 var velocity    := Vector2.ZERO
@@ -19,7 +18,6 @@ var circle_displacement := Vector2.ZERO
 var precited_position := Vector2.ZERO
 var is_selected := false
 
-@export var flock_id:int = 2
 @export var is_predator:bool = false
 @export var behavior: Behavior = Behavior.ARRIVAL
 @export var collision_avoidance_enabled := true
@@ -29,10 +27,13 @@ var path_index := 0
 
 func _ready():
 	velocity = Vector2.RIGHT.rotated(randf()*TAU) * Steering.max_speed
+
+func set_predator(in_bool:bool):
+	is_predator = in_bool
 	if is_predator:
 		$Sprite2D.modulate = Color(1.0, 0.25, 0.15)
 	else:
-		$Sprite2D.modulate = Color.from_hsv(float(flock_id) * 0.25, 1.0, 1.0, 1.0)
+		$Sprite2D.modulate = Color.from_hsv(0.25, 1.0, 1.0, 1.0)
 
 func _process(delta: float) -> void:
 	angle = velocity.angle()
@@ -40,18 +41,20 @@ func _process(delta: float) -> void:
 	$Sprite2D.rotation = angle
 
 	steering = calculate_steering(delta)
+	
 	if collision_avoidance_enabled:
-		steering += collision_avoidance(100.0)
+		steering += collision_avoidance()
+		
 	steering = steering.limit_length(Steering.max_steering_force)
 
 	velocity += steering * delta
 	velocity = velocity.limit_length(Steering.max_speed)
-	velocity -= velocity * Steering.friction * delta
+	velocity -= velocity * delta
 	handle_screen_edge()
 	
 	position += velocity * delta
 
-	if debug: queue_redraw()
+	if Steering.debug_draw: queue_redraw()
 
 func calculate_steering(delta: float) -> Vector2:
 	var mouse_position := get_global_mouse_position()
@@ -109,13 +112,20 @@ func pursuit(in_position:Vector2, in_velocity:Vector2) -> Vector2:
 func evade(in_position:Vector2, in_velocity:Vector2) -> Vector2:
 	return flee(predict_position(in_position, in_velocity))
 
+#func predict_position(in_position:Vector2, in_velocity:Vector2) -> Vector2:
+#	var distance := position.distance_to(in_position) 
+#	var speed := velocity.length()
+#	var t :float = distance / speed
+#	precited_position = in_position + in_velocity * t
+#	return precited_position
+	
 func predict_position(in_position:Vector2, in_velocity:Vector2) -> Vector2:
 	var prediction_time := 0.0
 	prediction_time = position.distance_to(in_position) / Steering.max_speed
 	precited_position = in_velocity * prediction_time
 	return in_position + precited_position
-	
-func collision_avoidance(obstacle_radius:float) -> Vector2:
+
+func collision_avoidance() -> Vector2:
 	var speed_ratio := velocity.length() / maxf(Steering.max_speed, 0.001)
 	var ahead := position + facing * Steering.max_see_ahead * speed_ratio
 	var ahead_half := position + facing * Steering.max_see_ahead * speed_ratio * 0.5
@@ -129,9 +139,9 @@ func collision_avoidance(obstacle_radius:float) -> Vector2:
 		if not obstacle is Node2D:
 			continue
 		var obstacle_position: Vector2 = obstacle.position
-		var blocks_path := obstacle_position.distance_to(ahead) <= obstacle_radius \
-			or obstacle_position.distance_to(ahead_half) <= obstacle_radius \
-			or obstacle_position.distance_to(position) <= obstacle_radius
+		var blocks_path := obstacle_position.distance_to(ahead) <= Steering.obstacle_distance \
+			or obstacle_position.distance_to(ahead_half) <= Steering.obstacle_distance \
+			or obstacle_position.distance_to(position) <= Steering.obstacle_distance
 		if not blocks_path:
 			continue
 
@@ -166,8 +176,6 @@ func get_boids() -> Array[Botek]:
 func get_neighbors(range_squared: float, field_of_view: float) -> Array:
 	var neighbors: Array[Botek] = []
 	for boid in get_boids():
-		if boid.flock_id != flock_id:
-			continue
 
 		var offset: Vector2 = boid.position - position
 		if offset.length_squared() == 0.0:
@@ -204,7 +212,7 @@ func handle_screen_edge():
 func _draw():
 	if is_selected:
 		draw_arc(Vector2.ZERO, 18.0, 0.0, TAU, 32, Color.YELLOW, 2.0)
-	if debug:
+	if Steering.debug_draw:
 		draw_circle(Vector2.ZERO, Steering.view_range, Color(1.0, 1.0, 1.0, 0.1))
 		draw_circle(circle_center, Steering.wander_radius, Color(0.0, 1.0, 1.0, 0.1))
 		draw_line(circle_center, circle_center + circle_displacement, Color(1.0, 1.0, 1.0, 0.2), 2.0)
@@ -239,35 +247,24 @@ func draw_poly_arc( radius, in_angle, fov, resolution, color ):
 
 #func predict_position(in_position:Vector2, in_velocity:Vector2) -> Vector2:
 #	var prediction_time := 0.0
-#	prediction_time = (position.distance_to(in_position) / maxf(Steering.max_speed, 0.001))
-#	return in_position + in_velocity * prediction_time
+#	prediction_time = position.distance_to(in_position) / Steering.max_speed
+#	precited_position = in_velocity * prediction_time
+#	return in_position + precited_position
 
-#func wander(delta: float) -> Vector2:
-#	var wander_facing := facing
-#	if wander_facing == Vector2.ZERO:
-#		wander_facing = Vector2.RIGHT.rotated(angle)
+
+#func collision_avoidance(obstacle_radius:float) -> Vector2:
+#	var speed_ratio := velocity.length() / maxf(Steering.max_speed, 0.001)
+#	var ahead := position + facing * Steering.max_see_ahead * speed_ratio
+#	var ahead_half := position + facing * Steering.max_see_ahead * speed_ratio * 0.5
 #
-#	circle_radius = wander_radius
-#	circle_center = wander_facing * wander_distance
-#	wander_angle += randf_range(-wander_jitter, wander_jitter) * delta
-#	circle_displacement = wander_facing.rotated(wander_angle) * circle_radius
-#	var target_velocity := (circle_center + circle_displacement).normalized() * Steering.max_speed
-#	return steer_toward(target_velocity)
-
-#func collision_avoidance(obstacles:Array, obstacle_radius:float) -> Vector2:
-#	if facing == Vector2.ZERO:
+#	var most_threatening :Node2D = null
+#	var threat_distance := 0.0
+#	if not is_instance_valid(Steering.obstacle_node):
 #		return Vector2.ZERO
 #
-#	var speed_ratio := velocity.length() / maxf(Steering.max_speed, 0.001)
-#	var ahead := position + facing * max_see_ahead * speed_ratio
-#	var ahead_half := position + facing * max_see_ahead * speed_ratio * 0.5
-#
-#	var most_threatening = null
-#	var threat_distance := 0.0
-#	for obstacle in obstacles:
-#		if obstacle == self:
+#	for obstacle in Steering.obstacle_node.get_children():
+#		if not obstacle is Node2D:
 #			continue
-#
 #		var obstacle_position: Vector2 = obstacle.position
 #		var blocks_path := obstacle_position.distance_to(ahead) <= obstacle_radius \
 #			or obstacle_position.distance_to(ahead_half) <= obstacle_radius \
@@ -283,8 +280,10 @@ func draw_poly_arc( radius, in_angle, fov, resolution, color ):
 #	if most_threatening == null:
 #		return Vector2.ZERO
 #
-#	var target_velocity: Vector2 = (ahead - most_threatening.position).normalized() * Steering.max_speed
-#	return steer_toward(target_velocity).limit_length(max_avoid_force)
+#	var target_velocity: Vector2 = (ahead - most_threatening.position).normalized()
+#	target_velocity *= Steering.max_speed
+#	
+#	return steer_toward(target_velocity).limit_length(Steering.max_avoid_force)
 
 #func path_follow(path:PackedVector2Array, loop := false) -> Vector2:
 #	if path.is_empty():
