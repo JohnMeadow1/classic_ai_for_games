@@ -1,7 +1,7 @@
 extends Node2D
 class_name Botek
 
-enum Behavior { SEEK, FLEE, ARRIVAL, WANDER, PURSUIT, EVADE }
+enum Behavior { SEEK, FLEE, ARRIVAL, WANDER, PURSUIT, EVADE, PATH_FOLLOW, FOLLOW_LEADER, QUEUE }
 
 var border_margin = 100
 
@@ -25,14 +25,20 @@ var is_selected := false
 
 var destination := Vector2.ZERO
 var has_destination := false
+
 var has_target_order := false
 var path_index := 0
+var path :PackedVector2Array
+
 
 func _ready():
 	velocity = Vector2.RIGHT.rotated(randf()*TAU) * Steering.max_speed / 60.0
 	update_behavior_label()
 	update_name_label()
 	#renamed.connect(update_name_label)
+
+func add_path_point(in_position:Vector2):
+	path.append(in_position)
 
 func update_name_label() -> void:
 	%NameLabel.text = name
@@ -82,6 +88,8 @@ func calculate_steering(delta: float) -> Vector2:
 	var mouse_position := get_global_mouse_position()
 	match behavior:
 		Behavior.SEEK:
+			if has_destination:
+				return seek(destination)
 			return seek(mouse_position)
 		Behavior.FLEE:
 			return flee(mouse_position)
@@ -99,6 +107,12 @@ func calculate_steering(delta: float) -> Vector2:
 			if is_instance_valid(target_agent) and target_agent != self:
 				return evade(target_agent.position, target_agent.velocity)
 			return wander(delta)
+		Behavior.PATH_FOLLOW:
+			return path_follow(path, false)
+			
+		Behavior.FOLLOW_LEADER:
+			return follow_leader(target_agent)
+			
 	return Vector2.ZERO
 
 func steer_toward(in_desired_velocity: Vector2) -> Vector2:
@@ -116,6 +130,8 @@ func wander(delta: float) -> Vector2:
 func arrival(in_position: Vector2) -> Vector2:
 	var direction := position.direction_to(in_position)
 	var distance := position.distance_to(in_position)
+	if distance < Steering.arrival_distance:
+		behavior = Behavior.WANDER
 	var arrival_range := maxf(Steering.view_range, 0.001)
 	var arrival_progress := minf(distance / arrival_range, 1.0)
 	var target_velocity := direction * Steering.max_speed * arrival_progress
@@ -238,9 +254,17 @@ func _draw():
 		draw_arc(Vector2.ZERO, 18.0, 0.0, TAU, 32, Color.YELLOW, 2.0)
 	if Steering.debug_draw:
 		draw_circle(Vector2.ZERO, Steering.view_range, Color(1.0, 1.0, 1.0, 0.1))
-		draw_circle(circle_center, Steering.wander_radius, Color(0.0, 1.0, 1.0, 0.1))
-		draw_line(circle_center, circle_center + circle_displacement, Color(1.0, 1.0, 1.0, 0.2), 2.0)
-		
+		if behavior == Behavior.WANDER:
+			draw_circle(circle_center, Steering.wander_radius, Color(0.0, 1.0, 1.0, 0.1))
+			draw_line(circle_center, circle_center + circle_displacement, Color(1.0, 1.0, 1.0, 0.2), 2.0)
+		if behavior in [Behavior.SEEK, Behavior.ARRIVAL]:
+			draw_vector(destination - global_position, Color.SKY_BLUE, 1.0)
+		if behavior in [Behavior.PATH_FOLLOW]:
+			for i in path.size()-1:
+				var from := path[i] - global_position
+				var to := path[i+1] - global_position
+				draw_line(from, to, Color.WHITE)
+				
 		draw_vector( steering, Color( 0.0, 1.0, 0.0, 0.3 ), 3 )
 		draw_vector( desired_velocity, Color( 0.0, 0.0, 1.0, 0.3 ), 3 )
 		draw_vector( precited_position, Color(0.982, 0.0, 0.115, 0.3), 3 )
@@ -309,41 +333,45 @@ func draw_poly_arc( radius, in_angle, fov, resolution, color ):
 #	
 #	return steer_toward(target_velocity).limit_length(Steering.max_avoid_force)
 
-#func path_follow(path:PackedVector2Array, loop := false) -> Vector2:
-#	if path.is_empty():
-#		return Vector2.ZERO
-#
-#	path_index = clampi(path_index, 0, path.size() - 1)
-#	var is_last_waypoint := path_index == path.size() - 1
-#
-#	if position.distance_to(path[path_index]) <= path_arrive_radius:
-#		if not is_last_waypoint:
-#			path_index += 1
-#		elif loop:
-#			path_index = 0
-#		is_last_waypoint = path_index == path.size() - 1
-#
-#	if is_last_waypoint and not loop:
-#		return arrival(path[path_index])
-#	return seek(path[path_index])
+func path_follow(path:PackedVector2Array, loop := false) -> Vector2:
+	if path.is_empty():
+		return Vector2.ZERO
 
-#func follow_leader(leader) -> Vector2:
-#	var leader_facing: Vector2 = leader.velocity.normalized()
-#	if leader_facing == Vector2.ZERO:
-#		leader_facing = Vector2.RIGHT.rotated(leader.angle)
-#
-#	var leader_offset := leader_facing * leader_behind_distance
-#	var behind_leader: Vector2 = leader.position - leader_offset
-#	var ahead_of_leader: Vector2 = leader.position + leader_offset
-#
-#	var force := Vector2.ZERO
-#	if position.distance_to(ahead_of_leader) <= leader_sight_radius:
-#		force += evade(leader.position, leader.velocity)
-#	force += arrival(behind_leader)
-#	force += separation()
-#
-#	desired_velocity = velocity + force
-#	return force
+	path_index = clampi(path_index, 0, path.size() - 1)
+	var is_last_waypoint := path_index == path.size() - 1
+
+	if position.distance_to(path[path_index]) <= Steering.path_arrive_radius:
+		if not is_last_waypoint:
+			path_index += 1
+		elif loop:
+			path_index = 0
+		is_last_waypoint = path_index == path.size() - 1
+
+	if is_last_waypoint and not loop:
+		var l_destinatio = path[path_index]
+		if position.distance_to(path[path_index]) <= Steering.arrival_distance:
+			path_index = 0
+			path.clear()
+		return arrival(l_destinatio)
+	return seek(path[path_index])
+
+func follow_leader(leader:Botek) -> Vector2:
+	var leader_facing: Vector2 = leader.velocity.normalized()
+	if leader_facing == Vector2.ZERO:
+		leader_facing = Vector2.RIGHT.rotated(leader.angle)
+
+	var leader_offset := leader_facing * Steering.leader_behind_distance
+	var behind_leader: Vector2 = leader.position - leader_offset
+	var ahead_of_leader: Vector2 = leader.position + leader_offset
+
+	var force := Vector2.ZERO
+	if position.distance_to(ahead_of_leader) <=  Steering.leader_sight_radius:
+		force += evade(leader.position, leader.velocity)
+	force += arrival(behind_leader)
+	force += separation()
+
+	desired_velocity = velocity + force
+	return force
 
 #func queue(in_steering:Vector2) -> Vector2:
 #	if get_neighbor_ahead() == null:
@@ -381,18 +409,18 @@ func draw_poly_arc( radius, in_angle, fov, resolution, color ):
 #	var target_velocity := position.direction_to(center_of_mass) * Steering.max_speed
 #	return steer_toward(target_velocity)
 #
-#func separation() -> Vector2:
-#	var neighbors := get_neighbors(
-#		Steering.separation_range_squared,
-#		Steering.separation_range_fov
-#	)
-#	if neighbors.is_empty():
-#		return Vector2.ZERO
-#
-#	var escape_direction := Vector2.ZERO
-#	for boid in neighbors:
-#		var offset: Vector2 = position - boid.position
-#		escape_direction += offset.normalized() / offset.length()
-#
-#	var target_velocity := escape_direction.normalized() * Steering.max_speed
-#	return steer_toward(target_velocity)
+func separation() -> Vector2:
+	var neighbors := get_neighbors(
+		Steering.separation_range ** 2,
+		Steering.separation_range_fov
+	)
+	if neighbors.is_empty():
+		return Vector2.ZERO
+
+	var escape_direction := Vector2.ZERO
+	for boid in neighbors:
+		var offset: Vector2 = position - boid.position
+		escape_direction += offset.normalized() / offset.length()
+
+	var target_velocity := escape_direction.normalized() * Steering.max_speed
+	return steer_toward(target_velocity)

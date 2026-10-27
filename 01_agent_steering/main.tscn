@@ -20,18 +20,6 @@ position = Vector2(686, 120)
 [node name="Obstacle" parent="ObstaclesContainer" unique_id=291054048 instance=ExtResource("3_h2yge")]
 position = Vector2(721, 287)
 
-[node name="Obstacle2" parent="ObstaclesContainer" unique_id=1514526894 instance=ExtResource("3_h2yge")]
-position = Vector2(449, 402)
-
-[node name="Obstacle3" parent="ObstaclesContainer" unique_id=1192505104 instance=ExtResource("3_h2yge")]
-position = Vector2(1050, 197)
-
-[node name="Obstacle4" parent="ObstaclesContainer" unique_id=5933758 instance=ExtResource("3_h2yge")]
-position = Vector2(304, 130)
-
-[node name="Obstacle5" parent="ObstaclesContainer" unique_id=571168904 instance=ExtResource("3_h2yge")]
-position = Vector2(178, 353)
-
 [node name="World2D" type="Node2D" parent="." unique_id=223259670]
 script = ExtResource("4_controller")
 BOIDS_COUNT = 1

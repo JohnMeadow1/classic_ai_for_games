@@ -11,10 +11,12 @@ var max_see_ahead          := 60.0
 var max_avoid_force        := 150.0
 var path_arrive_radius     := 20.0
 
-var leader_behind_distance := 40.0
+var leader_behind_distance := 25.0
 var leader_sight_radius    := 50.0
 
 var obstacle_distance := 100.0
+
+var arrival_distance := 10.0
 
 var queue_ahead_distance   := 25.0
 var queue_radius           := 25.0

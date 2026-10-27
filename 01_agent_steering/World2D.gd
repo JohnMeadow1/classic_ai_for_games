@@ -10,7 +10,7 @@ signal selected_agent_changed(agent: Botek)
 var agents: Array[Botek] = []
 var selected_agent: Botek
 var current_behavior := Botek.Behavior.WANDER
-var selected_only := false
+var selected_only := true
 var collision_avoidance_enabled := true
 var spawned_count := 0
 
@@ -47,16 +47,19 @@ func issue_order(in_global_position: Vector2) -> void:
 	selected_agent.target_agent = clicked_agent
 	selected_agent.set_predator(clicked_agent != null)
 	if clicked_agent == null:
-		selected_agent.destination = to_local(in_global_position)
-		selected_agent.behavior = Botek.Behavior.ARRIVAL
+		selected_agent.destination = in_global_position
+		selected_agent.add_path_point(in_global_position)
+		#if not selected_agent.behavior in [Botek.Behavior.ARRIVAL, Botek.Behavior.SEEK]:
+		selected_agent.behavior = Botek.Behavior.PATH_FOLLOW
 	else:
-		selected_agent.behavior = Botek.Behavior.PURSUIT
-		clicked_agent.behavior = Botek.Behavior.EVADE
-		clicked_agent.target_agent = selected_agent
-		clicked_agent.has_target_order = true
-		clicked_agent.has_destination = false
-		clicked_agent.set_predator(false)
-		clicked_agent.update_behavior_label()
+		selected_agent.behavior = Botek.Behavior.FOLLOW_LEADER
+		#clicked_agent.behavior = Botek.Behavior.EVADE
+		#clicked_agent.target_agent = selected_agent
+		#clicked_agent.has_target_order = true
+		#clicked_agent.has_destination = false
+		#clicked_agent.set_predator(false)
+		#clicked_agent.update_behavior_label()
+		
 	selected_agent.update_behavior_label()
 	current_behavior = selected_agent.behavior
 	selected_agent_changed.emit(selected_agent)
