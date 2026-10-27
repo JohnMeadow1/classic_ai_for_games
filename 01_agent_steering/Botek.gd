@@ -27,6 +27,19 @@ var path_index := 0
 
 func _ready():
 	velocity = Vector2.RIGHT.rotated(randf()*TAU) * Steering.max_speed
+	update_behavior_label()
+
+func get_behavior_name() -> String:
+	var behavior_name: String = Behavior.keys()[behavior].capitalize()
+	var needs_target := behavior == Behavior.PURSUIT or behavior == Behavior.EVADE
+	if needs_target and not (is_instance_valid(target_agent) and target_agent != self):
+		return "%s (no target: Wander)" % behavior_name
+	return behavior_name
+
+func update_behavior_label() -> void:
+	var label_text := get_behavior_name()
+	if %BehaviorLabel.text != label_text:
+		%BehaviorLabel.text = label_text
 
 func set_predator(in_bool:bool):
 	is_predator = in_bool
@@ -41,6 +54,7 @@ func _process(delta: float) -> void:
 	$Sprite2D.rotation = angle
 
 	steering = calculate_steering(delta)
+	update_behavior_label()
 	
 	if collision_avoidance_enabled:
 		steering += collision_avoidance()
