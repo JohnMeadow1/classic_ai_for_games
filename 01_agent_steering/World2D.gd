@@ -12,6 +12,7 @@ var selected_agent: Botek
 var current_behavior := Botek.Behavior.WANDER
 var selected_only := false
 var collision_avoidance_enabled := true
+var spawned_count := 0
 
 func _ready() -> void:
 	add_to_group("agent_controller")
@@ -51,6 +52,8 @@ func spawn_agent(spawn_position: Vector2, notify := true) -> Botek:
 		push_error("The configured boid scene root must use boid.gd.")
 		return null
 
+	spawned_count += 1
+	new_agent.name = "Botek %d" % spawned_count
 	new_agent.position = spawn_position
 	new_agent.behavior = Botek.Behavior.WANDER
 	new_agent.collision_avoidance_enabled = collision_avoidance_enabled

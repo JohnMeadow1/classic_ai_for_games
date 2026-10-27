@@ -72,7 +72,7 @@ func update_selected_agent(agent: Botek) -> void:
 	if is_instance_valid(agent):
 		behavior_option.select(behavior_option.get_item_index(agent.behavior))
 	%selected_agent.text = (
-		"Selected: Agent %d" % agent.get_index()
+		"Selected: %s" % agent.name
 		if is_instance_valid(agent)
 		else "Selected: none"
 	)

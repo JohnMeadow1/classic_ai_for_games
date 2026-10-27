@@ -28,6 +28,11 @@ var path_index := 0
 func _ready():
 	velocity = Vector2.RIGHT.rotated(randf()*TAU) * Steering.max_speed / 60.0
 	update_behavior_label()
+	update_name_label()
+	#renamed.connect(update_name_label)
+
+func update_name_label() -> void:
+	%NameLabel.text = name
 
 func get_behavior_name() -> String:
 	var behavior_name: String = Behavior.keys()[behavior].capitalize()
