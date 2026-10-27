@@ -23,6 +23,9 @@ var is_selected := false
 @export var collision_avoidance_enabled := true
 @export var target_agent: Botek
 
+var destination := Vector2.ZERO
+var has_destination := false
+var has_target_order := false
 var path_index := 0
 
 func _ready():
@@ -83,6 +86,8 @@ func calculate_steering(delta: float) -> Vector2:
 		Behavior.FLEE:
 			return flee(mouse_position)
 		Behavior.ARRIVAL:
+			if has_destination:
+				return arrival(destination)
 			return arrival(mouse_position)
 		Behavior.WANDER:
 			return wander(delta)

@@ -25,14 +25,41 @@ func _ready() -> void:
 func _unhandled_input(event: InputEvent) -> void:
 	if not event is InputEventMouseButton or not event.pressed:
 		return
-	if event.button_index != MOUSE_BUTTON_LEFT:
+	var click_position: Vector2 = get_global_mouse_position()
+	match event.button_index:
+		MOUSE_BUTTON_LEFT:
+			if Input.is_key_pressed(KEY_SHIFT):
+				spawn_agent(to_local(click_position))
+			else:
+				select_nearest_agent(click_position)
+		MOUSE_BUTTON_RIGHT:
+			issue_order(click_position)
+
+func issue_order(in_global_position: Vector2) -> void:
+	if not is_instance_valid(selected_agent):
 		return
 
-	var click_position := get_global_mouse_position()
-	if Input.is_key_pressed(KEY_SHIFT):
-		spawn_agent(to_local(click_position))
+	var clicked_agent := agent_at_position(in_global_position)
+	if clicked_agent == selected_agent:
+		return
+	selected_agent.has_destination = clicked_agent == null
+	selected_agent.has_target_order = clicked_agent != null
+	selected_agent.target_agent = clicked_agent
+	selected_agent.set_predator(clicked_agent != null)
+	if clicked_agent == null:
+		selected_agent.destination = to_local(in_global_position)
+		selected_agent.behavior = Botek.Behavior.ARRIVAL
 	else:
-		select_nearest_agent(click_position)
+		selected_agent.behavior = Botek.Behavior.PURSUIT
+		clicked_agent.behavior = Botek.Behavior.EVADE
+		clicked_agent.target_agent = selected_agent
+		clicked_agent.has_target_order = true
+		clicked_agent.has_destination = false
+		clicked_agent.set_predator(false)
+		clicked_agent.update_behavior_label()
+	selected_agent.update_behavior_label()
+	current_behavior = selected_agent.behavior
+	selected_agent_changed.emit(selected_agent)
 
 func set_agent_count(target_count: int) -> void:
 	target_count = maxi(target_count, 0)
@@ -80,6 +107,9 @@ func _on_agent_exiting(agent: Botek) -> void:
 	agent_count_changed.emit(agents.size())
 
 func select_nearest_agent(in_global_position: Vector2) -> void:
+	set_selected_agent(agent_at_position(in_global_position))
+
+func agent_at_position(in_global_position: Vector2) -> Botek:
 	var nearest: Botek
 	var nearest_distance := 30.0
 	for agent in agents:
@@ -87,7 +117,7 @@ func select_nearest_agent(in_global_position: Vector2) -> void:
 		if distance < nearest_distance:
 			nearest = agent
 			nearest_distance = distance
-	set_selected_agent(nearest)
+	return nearest
 
 func set_selected_agent(agent: Botek) -> void:
 	if is_instance_valid(selected_agent):
@@ -108,11 +138,15 @@ func set_behavior(new_behavior: Botek.Behavior) -> void:
 	current_behavior = new_behavior
 	if selected_only:
 		if is_instance_valid(selected_agent):
+			selected_agent.has_destination = false
+			selected_agent.has_target_order = false
 			selected_agent.behavior = current_behavior
 			selected_agent.set_predator(new_behavior == Botek.Behavior.PURSUIT)
 
 	else:
 		for agent in agents:
+			agent.has_destination = false
+			agent.has_target_order = false
 			agent.behavior = current_behavior
 			agent.set_predator(new_behavior == Botek.Behavior.PURSUIT)
 
@@ -121,6 +155,8 @@ func set_selected_only(enabled: bool) -> void:
 	selected_only = enabled
 	if not selected_only:
 		for agent in agents:
+			agent.has_destination = false
+			agent.has_target_order = false
 			agent.behavior = current_behavior
 
 func set_collision_avoidance_enabled(enabled: bool) -> void:
@@ -136,6 +172,12 @@ func refresh_targets() -> void:
 			break
 
 	for agent in agents:
+		if agent.target_agent != agent \
+		and agent.has_target_order \
+		and is_instance_valid(agent.target_agent) \
+		and agents.has(agent.target_agent):
+			continue
+		agent.has_target_order = false
 		if agent.is_predator:
 			agent.target_agent = nearest_agent_to(agent, false)
 		elif is_instance_valid(predator) and predator != agent:
