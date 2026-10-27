@@ -19,7 +19,7 @@ var precited_position := Vector2.ZERO
 var is_selected := false
 
 @export var is_predator:bool = false
-@export var behavior: Behavior = Behavior.ARRIVAL
+@export var behavior: Behavior = Behavior.WANDER
 @export var collision_avoidance_enabled := true
 @export var target_agent: Botek
 

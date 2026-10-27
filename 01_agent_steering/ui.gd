@@ -28,7 +28,7 @@ func _ready():
 	behavior_option.add_item("Wander", Botek.Behavior.WANDER)
 	behavior_option.add_item("Pursuit", Botek.Behavior.PURSUIT)
 	behavior_option.add_item("Evade", Botek.Behavior.EVADE)
-	behavior_option.select(behavior_option.get_item_index(Botek.Behavior.ARRIVAL))
+	behavior_option.select(behavior_option.get_item_index(Botek.Behavior.WANDER))
 
 	behavior_option.item_selected.connect(_on_behavior_selected)
 	agent_count_input.value_changed.connect(_on_agent_count_changed)

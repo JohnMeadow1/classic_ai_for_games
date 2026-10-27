@@ -9,7 +9,7 @@ signal selected_agent_changed(agent: Botek)
 
 var agents: Array[Botek] = []
 var selected_agent: Botek
-var current_behavior := Botek.Behavior.ARRIVAL
+var current_behavior := Botek.Behavior.WANDER
 var selected_only := false
 var collision_avoidance_enabled := true
 
@@ -52,10 +52,7 @@ func spawn_agent(spawn_position: Vector2, notify := true) -> Botek:
 		return null
 
 	new_agent.position = spawn_position
-	if new_agent.is_predator:
-		new_agent.behavior = new_agent.Behavior.PURSUIT
-	else:
-		new_agent.behavior = new_agent.Behavior.EVADE
+	new_agent.behavior = Botek.Behavior.WANDER
 	new_agent.collision_avoidance_enabled = collision_avoidance_enabled
 	#new_agent.debug = false
 	add_child(new_agent)
