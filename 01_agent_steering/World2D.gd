@@ -42,23 +42,10 @@ func issue_order(in_global_position: Vector2) -> void:
 	var clicked_agent := agent_at_position(in_global_position)
 	if clicked_agent == selected_agent:
 		return
-	selected_agent.has_destination = clicked_agent == null
-	selected_agent.has_target_order = clicked_agent != null
-	selected_agent.target_agent = clicked_agent
-	selected_agent.set_predator(clicked_agent != null)
 	if clicked_agent == null:
-		selected_agent.destination = in_global_position
-		selected_agent.add_path_point(in_global_position)
-		#if not selected_agent.behavior in [Botek.Behavior.ARRIVAL, Botek.Behavior.SEEK]:
-		selected_agent.behavior = Botek.Behavior.PATH_FOLLOW
+		selected_agent.issue_destination_order(in_global_position)
 	else:
-		selected_agent.behavior = Botek.Behavior.FOLLOW_LEADER
-		#clicked_agent.behavior = Botek.Behavior.EVADE
-		#clicked_agent.target_agent = selected_agent
-		#clicked_agent.has_target_order = true
-		#clicked_agent.has_destination = false
-		#clicked_agent.set_predator(false)
-		#clicked_agent.update_behavior_label()
+		selected_agent.issue_follow_order(clicked_agent)
 		
 	selected_agent.update_behavior_label()
 	current_behavior = selected_agent.behavior
@@ -124,12 +111,10 @@ func agent_at_position(in_global_position: Vector2) -> Botek:
 
 func set_selected_agent(agent: Botek) -> void:
 	if is_instance_valid(selected_agent):
-		selected_agent.is_selected = false
-		selected_agent.queue_redraw()
+		selected_agent.set_selected(false)
 	selected_agent = agent if is_instance_valid(agent) else null
 	if is_instance_valid(selected_agent):
-		selected_agent.is_selected = true
-		selected_agent.queue_redraw()
+		selected_agent.set_selected(true)
 		current_behavior = selected_agent.behavior
 	selected_agent_changed.emit(selected_agent)
 
@@ -141,26 +126,18 @@ func set_behavior(new_behavior: Botek.Behavior) -> void:
 	current_behavior = new_behavior
 	if selected_only:
 		if is_instance_valid(selected_agent):
-			selected_agent.has_destination = false
-			selected_agent.has_target_order = false
-			selected_agent.behavior = current_behavior
-			selected_agent.set_predator(new_behavior == Botek.Behavior.PURSUIT)
+			selected_agent.set_behavior_and_clear_order(current_behavior)
 
 	else:
 		for agent in agents:
-			agent.has_destination = false
-			agent.has_target_order = false
-			agent.behavior = current_behavior
-			agent.set_predator(new_behavior == Botek.Behavior.PURSUIT)
+			agent.set_behavior_and_clear_order(current_behavior)
 
 
 func set_selected_only(enabled: bool) -> void:
 	selected_only = enabled
 	if not selected_only:
 		for agent in agents:
-			agent.has_destination = false
-			agent.has_target_order = false
-			agent.behavior = current_behavior
+			agent.set_behavior_and_clear_order(current_behavior, false)
 
 func set_collision_avoidance_enabled(enabled: bool) -> void:
 	collision_avoidance_enabled = enabled
@@ -180,13 +157,12 @@ func refresh_targets() -> void:
 		and is_instance_valid(agent.target_agent) \
 		and agents.has(agent.target_agent):
 			continue
-		agent.has_target_order = false
 		if agent.is_predator:
-			agent.target_agent = nearest_agent_to(agent, false)
+			agent.set_automatic_target(nearest_agent_to(agent, false))
 		elif is_instance_valid(predator) and predator != agent:
-			agent.target_agent = predator
+			agent.set_automatic_target(predator)
 		else:
-			agent.target_agent = nearest_agent_to(agent, true)
+			agent.set_automatic_target(nearest_agent_to(agent, true))
 
 func nearest_agent_to(agent: Botek, include_predators: bool) -> Botek:
 	var nearest: Botek

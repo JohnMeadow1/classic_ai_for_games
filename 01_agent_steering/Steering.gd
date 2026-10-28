@@ -29,14 +29,16 @@ var separation_rate    := 15.0
 var friction           := 0.0
 
 var view_range         := 0.0
+var view_range_squared        := 0.0
 var view_range_fov     := 0.0
 
 var max_speed          := 0.0
 
 var separation_range := 0.0
+var separation_range_squared := 0.0
 var separation_range_fov     := 0.0
 
-var debug_draw := true
+var is_debug_draw := true
 var space_wrap := false
 
 var obstacle_node :Node2D

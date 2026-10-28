@@ -15,9 +15,11 @@ func _ready():
 	
 	Steering.friction         = %friction.value
 	Steering.view_range       = %view_range.value 
+	Steering.view_range_squared = Steering.view_range * Steering.view_range
 	Steering.view_range_fov    = deg_to_rad( %range_fov.value * 0.5 )
 	
 	Steering.separation_range = %separation_range.value
+	Steering.separation_range_squared = Steering.separation_range * Steering.separation_range
 	Steering.separation_range_fov    = deg_to_rad( %separation_fov.value * 0.5 )
 	
 	Steering.max_speed        = %max_speed.value
@@ -116,3 +118,7 @@ func _on_hide_parameters_toggled(toggled_on: bool) -> void:
 
 func _on_hide_behavior_toggled(toggled_on: bool) -> void:
 	%AgentControls.visible = toggled_on
+
+
+func _on_debug_draw_toggled(toggled_on: bool) -> void:
+	Steering.is_debug_draw = toggled_on

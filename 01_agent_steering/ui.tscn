@@ -248,6 +248,13 @@ size_flags_horizontal = 0
 button_pressed = true
 text = "Show UI"
 
+[node name="debug_draw" type="CheckButton" parent="VBoxLeft" unique_id=1233512102]
+layout_mode = 2
+size_flags_horizontal = 0
+button_pressed = true
+text = "Draw Debug"
+
 [connection signal="toggled" from="VBoxRight/space_wrap" to="." method="_on_space_wrap_toggled"]
 [connection signal="toggled" from="VBoxRight/hide_behavior" to="." method="_on_hide_behavior_toggled"]
 [connection signal="toggled" from="VBoxLeft/hide_parameters" to="." method="_on_hide_parameters_toggled"]
+[connection signal="toggled" from="VBoxLeft/debug_draw" to="." method="_on_debug_draw_toggled"]
