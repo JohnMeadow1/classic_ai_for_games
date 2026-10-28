@@ -1,11 +1,17 @@
 extends RefCounted
 class_name AgentBehavior
 
+var is_timer_ready := true
+
 func enter(_agent) -> void:
 	pass
 
 func exit(_agent) -> void:
 	pass
+
+func timer_timeout() -> void:
+	is_timer_ready = true
+
 
 func calculate_steering(_agent:Botek, _delta: float) -> Vector2:
 	return Vector2.ZERO

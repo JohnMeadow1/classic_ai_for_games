@@ -137,7 +137,7 @@ func _process(delta: float) -> void:
 	steering = steering.limit_length(Steering.max_steering_force)
 
 	velocity += steering * delta
-	velocity = velocity.limit_length(Steering.max_speed)
+	#velocity = velocity.limit_length(Steering.max_speed)
 	velocity -= velocity * delta
 	handle_screen_edge()
 	
@@ -279,3 +279,9 @@ func separation() -> Vector2:
 
 	var target_velocity := escape_direction.normalized() * Steering.max_speed
 	return steer_toward(target_velocity)
+
+func start_timer():
+	%Timer.start()
+
+func _on_timer_timeout() -> void:
+	state_machine.push_timer_to_behavior()

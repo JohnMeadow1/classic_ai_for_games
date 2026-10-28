@@ -15,6 +15,9 @@ func configure(in_agent: Node2D, in_behavior_scripts: Dictionary) -> void:
 	behavior_scripts = in_behavior_scripts
 	is_configured = true
 
+func push_timer_to_behavior():
+	current_behavior.timer_timeout()
+
 func change_behavior(behavior_id: int) -> bool:
 	if not is_configured or not behavior_scripts.has(behavior_id):
 		push_warning("Ignoring unsupported steering behavior: %d" % behavior_id)

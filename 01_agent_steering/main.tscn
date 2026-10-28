@@ -3,7 +3,7 @@
 [ext_resource type="Script" uid="uid://c41rnivvdqvm6" path="res://ObstaclesContainer.gd" id="1_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://c1ecxyptgl5xr" path="res://Botek.tscn" id="2"]
 [ext_resource type="PackedScene" uid="uid://bxybipfmfsfgb" path="res://ui.tscn" id="2_h2yge"]
-[ext_resource type="PackedScene" uid="uid://5p5ufm4ihnow" path="res://Obstacle.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://5p5ufm4ihnow" path="res://obstacle.tscn" id="3_h2yge"]
 [ext_resource type="Script" uid="uid://lyiblxomyq48" path="res://World2D.gd" id="4_controller"]
 
 [node name="main" type="Node" unique_id=1845128593]

@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bd57y17pxi3jf"]
+
+[ext_resource type="Script" uid="uid://d0sudeq7burqe" path="res://obstacle_temporary.gd" id="1_1273a"]
+[ext_resource type="Texture2D" uid="uid://cm3ehjos6kefo" path="res://sprites/light_03.png" id="2_ifxtn"]
+
+[node name="ObstacleTemporary" type="Node2D" unique_id=1172701671]
+script = ExtResource("1_1273a")
+
+[node name="Light03" type="Sprite2D" parent="." unique_id=796290372]
+scale = Vector2(0.1, 0.1)
+texture = ExtResource("2_ifxtn")
