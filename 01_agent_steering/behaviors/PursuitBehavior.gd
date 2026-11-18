@@ -9,7 +9,7 @@ func calculate_steering(agent:Botek, delta: float) -> Vector2:
 			
 		var l_distance := agent.position.distance_to(agent.target_agent.position)
 		if is_timer_ready and l_distance <= Steering.view_range * 0.6:
-			do_attack(agent, 70.0)
+			do_attack(agent, 30.0)
 
 			
 		
