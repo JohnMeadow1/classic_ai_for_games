@@ -37,7 +37,11 @@ func _unhandled_input(event: InputEvent) -> void:
 					Steering.map.set_target(click_position)
 				
 		MOUSE_BUTTON_RIGHT:
-			issue_order(click_position)
+			if is_instance_valid(selected_agent):
+				issue_order(click_position)
+			else:
+				Steering.map.add_obstacle(click_position)
+			
 
 func issue_order(in_global_position: Vector2) -> void:
 	if not is_instance_valid(selected_agent):
