@@ -1,28 +1,25 @@
 [gd_scene format=3 uid="uid://bfqd288uxrood"]
 
-[ext_resource type="Script" uid="uid://c41rnivvdqvm6" path="res://ObstaclesContainer.gd" id="1_1bvp3"]
-[ext_resource type="PackedScene" uid="uid://c1ecxyptgl5xr" path="res://Botek.tscn" id="2"]
-[ext_resource type="PackedScene" uid="uid://bxybipfmfsfgb" path="res://ui.tscn" id="2_h2yge"]
-[ext_resource type="PackedScene" uid="uid://5p5ufm4ihnow" path="res://obstacle.tscn" id="3_h2yge"]
-[ext_resource type="Script" uid="uid://lyiblxomyq48" path="res://World2D.gd" id="4_controller"]
+[ext_resource type="Script" uid="uid://c41rnivvdqvm6" path="res://navigation/ObstaclesContainer.gd" id="1_1bvp3"]
+[ext_resource type="PackedScene" uid="uid://bxybipfmfsfgb" path="res://UI/UI.tscn" id="2_h2yge"]
+[ext_resource type="PackedScene" uid="uid://5p5ufm4ihnow" path="res://navigation/Obstacle.tscn" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://bvd6d7xkhivh0" path="res://agents/AgentController.tscn" id="5_lquwl"]
+[ext_resource type="PackedScene" uid="uid://dplpivxxj7cp0" path="res://navigation/Map.tscn" id="6_7mycd"]
 
 [node name="main" type="Node" unique_id=1845128593]
 
 [node name="UI" parent="." unique_id=154477144 instance=ExtResource("2_h2yge")]
 
+[node name="Map" parent="." unique_id=820814064 instance=ExtResource("6_7mycd")]
+
 [node name="ObstaclesContainer" type="Node2D" parent="." unique_id=1633840079]
 script = ExtResource("1_1bvp3")
 metadata/_edit_lock_ = true
 
-[node name="Node2D" parent="ObstaclesContainer" unique_id=1172701671 instance=ExtResource("3_h2yge")]
-position = Vector2(686, 120)
-
 [node name="Obstacle" parent="ObstaclesContainer" unique_id=291054048 instance=ExtResource("3_h2yge")]
 position = Vector2(721, 287)
 
-[node name="World2D" type="Node2D" parent="." unique_id=223259670]
-script = ExtResource("4_controller")
-BOIDS_COUNT = 1
+[node name="Obstacle2" parent="ObstaclesContainer" unique_id=1172701671 instance=ExtResource("3_h2yge")]
+position = Vector2(686, 120)
 
-[node name="Botek" parent="World2D" unique_id=1774474643 instance=ExtResource("2")]
-is_predator = true
+[node name="AgentController" parent="." unique_id=1200579840 instance=ExtResource("5_lquwl")]

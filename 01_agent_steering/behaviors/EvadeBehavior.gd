@@ -17,7 +17,7 @@ func calculate_steering(agent:Botek,delta: float) -> Vector2:
 func _drop_opstacle(agent:Botek) -> void:
 	is_timer_ready = false
 	agent.start_timer()
-	var new_obstacle = preload("res://obstacle_temporary.tscn").instantiate()
+	var new_obstacle = preload("res://navigation/ObstacleTemporary.tscn").instantiate()
 	Steering.obstacle_node.add_child(new_obstacle)
 	new_obstacle.position = agent.position
 	

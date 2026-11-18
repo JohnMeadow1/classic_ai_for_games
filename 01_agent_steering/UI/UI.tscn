@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://bxybipfmfsfgb"]
 
-[ext_resource type="Script" uid="uid://bkm18ryv31r7o" path="res://ui.gd" id="1_fyqef"]
+[ext_resource type="Script" uid="uid://bkm18ryv31r7o" path="res://UI/UI.gd" id="1_2fwl4"]
 
 [node name="UI" type="CanvasLayer" unique_id=154477144]
-script = ExtResource("1_fyqef")
+script = ExtResource("1_2fwl4")
 
 [node name="VBoxRight" type="VBoxContainer" parent="." unique_id=625953747]
 unique_name_in_owner = true
