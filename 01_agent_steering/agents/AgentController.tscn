@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bvd6d7xkhivh0"]
+
+[ext_resource type="Script" uid="uid://lyiblxomyq48" path="res://agents/AgentController.gd" id="1_xsiae"]
+[ext_resource type="PackedScene" uid="uid://c1ecxyptgl5xr" path="res://agents/Botek.tscn" id="2_awock"]
+
+[node name="AgentController" type="Node2D" unique_id=1200579840]
+script = ExtResource("1_xsiae")
+BOIDS_COUNT = 1
+
+[node name="Botek" parent="." unique_id=1774474643 instance=ExtResource("2_awock")]
+is_predator = true
