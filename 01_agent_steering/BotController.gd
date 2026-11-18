@@ -32,6 +32,9 @@ func _unhandled_input(event: InputEvent) -> void:
 				spawn_agent(to_local(click_position))
 			else:
 				select_nearest_agent(click_position)
+				if not selected_agent:
+					Steering.map.set_target(click_position)
+				
 		MOUSE_BUTTON_RIGHT:
 			issue_order(click_position)
 
@@ -119,7 +122,7 @@ func set_selected_agent(agent: Botek) -> void:
 	selected_agent_changed.emit(selected_agent)
 
 func set_behavior(new_behavior: Botek.Behavior) -> void:
-	if new_behavior < Botek.Behavior.SEEK or new_behavior > Botek.Behavior.EVADE:
+	if new_behavior < Botek.Behavior.SEEK or new_behavior > Botek.Behavior.VECTOR_FIELD:
 		push_warning("Ignoring unknown steering behavior: %d" % new_behavior)
 		return
 		
