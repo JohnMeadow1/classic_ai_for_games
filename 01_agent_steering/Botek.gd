@@ -1,7 +1,7 @@
 extends Node2D
 class_name Botek
 
-enum Behavior { SEEK, FLEE, ARRIVAL, WANDER, PURSUIT, EVADE, PATH_FOLLOW, FOLLOW_LEADER, QUEUE }
+enum Behavior { SEEK, FLEE, ARRIVAL, WANDER, PURSUIT, EVADE, PATH_FOLLOW, FOLLOW_LEADER, QUEUE, VECTOR_FIELD }
 
 const BEHAVIOR_SCRIPTS := {
 	Behavior.SEEK: preload("res://behaviors/SeekBehavior.gd"),
@@ -12,7 +12,8 @@ const BEHAVIOR_SCRIPTS := {
 	Behavior.EVADE: preload("res://behaviors/EvadeBehavior.gd"),
 	Behavior.PATH_FOLLOW: preload("res://behaviors/PathFollowBehavior.gd"),
 	Behavior.FOLLOW_LEADER: preload("res://behaviors/FollowLeaderBehavior.gd"),
-	Behavior.QUEUE: preload("res://behaviors/QueueBehavior.gd")
+	Behavior.QUEUE: preload("res://behaviors/QueueBehavior.gd"),
+	Behavior.VECTOR_FIELD: preload("res://behaviors/VectorFieldBehavior.gd")
 }
 
 var border_margin = 100

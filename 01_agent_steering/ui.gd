@@ -30,6 +30,7 @@ func _ready():
 	behavior_option.add_item("Wander", Botek.Behavior.WANDER)
 	behavior_option.add_item("Pursuit", Botek.Behavior.PURSUIT)
 	behavior_option.add_item("Evade", Botek.Behavior.EVADE)
+	behavior_option.add_item("Vector Follow", Botek.Behavior.VECTOR_FIELD)
 	behavior_option.select(behavior_option.get_item_index(Botek.Behavior.WANDER))
 
 	behavior_option.item_selected.connect(_on_behavior_selected)
