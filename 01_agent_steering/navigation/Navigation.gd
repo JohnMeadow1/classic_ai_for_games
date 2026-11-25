@@ -36,7 +36,9 @@ func update_terrain():
 	for y in parent.grid_size.y:
 		for x in parent.grid_size.x:
 			if parent.obstacle_cells[x + y * parent.grid_size.x]:
-				_astar.set_point_solid(Vector2i(x,y))
+				_astar.set_point_solid(Vector2i(x,y), true)
+			else:
+				_astar.set_point_solid(Vector2i(x,y), false)
 
 func local_to_map(in_position) -> Vector2i:
 	return (in_position/CELL_SIZE)
