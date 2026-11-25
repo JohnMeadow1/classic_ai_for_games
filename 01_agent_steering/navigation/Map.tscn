@@ -1,6 +1,16 @@
 [gd_scene format=3 uid="uid://dplpivxxj7cp0"]
 
 [ext_resource type="Script" uid="uid://ds7a71awpp2ji" path="res://navigation/Map.gd" id="1_82ug7"]
+[ext_resource type="Script" uid="uid://dte87hkb3ib0x" path="res://navigation/Navigation.gd" id="2_lw8i5"]
 
 [node name="Map" type="Node2D" unique_id=820814064]
 script = ExtResource("1_82ug7")
+
+[node name="Navigation" type="Node2D" parent="." unique_id=1534171842]
+unique_name_in_owner = true
+script = ExtResource("2_lw8i5")
+
+[node name="Timer" type="Timer" parent="." unique_id=841189538]
+one_shot = true
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

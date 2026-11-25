@@ -17,5 +17,7 @@ func calculate_steering(agent:Botek, _delta: float) -> Vector2:
 			agent.path_index = 0
 			agent.path.clear()
 			agent.request_behavior("WANDER")
+			Steering.navigation.clear_path()
+			
 		return arrival(agent, destination)
 	return seek(agent, agent.path[agent.path_index])

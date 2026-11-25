@@ -1,6 +1,7 @@
 extends Node
 
 var map:VectorMap
+var navigation:AstarNavigation
 
 @export_group("Behavior tuning")
 var max_steering_force     := 300.0

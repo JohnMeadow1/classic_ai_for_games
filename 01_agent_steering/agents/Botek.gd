@@ -68,7 +68,9 @@ func issue_destination_order(in_position: Vector2) -> void:
 	target_agent = null
 	set_predator(false)
 	destination = in_position
-	add_path_point(in_position)
+	path = Steering.navigation.find_path(position, in_position)
+	path_index = 0
+	#add_path_point(in_position)
 	behavior = Behavior.PATH_FOLLOW
 
 func issue_follow_order(target: Botek) -> void:

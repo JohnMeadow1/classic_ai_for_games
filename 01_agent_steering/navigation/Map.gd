@@ -1,7 +1,7 @@
 extends Node2D
 class_name VectorMap
 
-const GRID_RES := 30
+const GRID_RES := 40
 const WALKABLE_COST := 999
 const BLOCKED_COST := 1000
 
@@ -15,6 +15,7 @@ var navigation_target: Vector2i
 
 var max_distance := -INF
 @export var is_draw_grid: bool = true
+@onready var timer: Timer = $Timer
 
 func _ready() -> void:
 	Steering.map = self
@@ -22,7 +23,7 @@ func _ready() -> void:
 	grid_cells.resize(grid_size.x * grid_size.y)
 	obstacle_cells.resize(grid_size.x * grid_size.y)
 	vector_field.resize(grid_size.x * grid_size.y)
-	
+	Steering.navigation.initialize()
 
 func set_target(in_position:Vector2) -> void:
 	navigation_target = (in_position / GRID_RES).floor()
@@ -39,18 +40,28 @@ func _clear_grid():
 	_bake_in_obstacles()
 
 func _regenerate_grid():
-	var start_time = Time.get_ticks_msec()
+	#var start_time = Time.get_ticks_msec()
 	update_distance_field()
 	update_vector_field()
-	print( Time.get_ticks_msec() - start_time)
+	#print( Time.get_ticks_msec() - start_time)
 	queue_redraw()
+
+
 
 
 func add_obstacle(coords: Vector2) -> void:
 	coords = (coords/GRID_RES).floor()
 	toggle_obstacle_value(int(coords.x), int(coords.y))
+	queue_redraw()
+	timer.start(1.0)
+	
+func _on_timer_timeout() -> void:
+	update_navigation()
+	
+func update_navigation():
 	_clear_grid()
 	_bake_in_obstacles()
+	Steering.navigation.update_terrain()
 	_regenerate_grid()
 	
 func _bake_in_obstacles():
@@ -147,6 +158,9 @@ func toggle_obstacle_value(x: int, y: int) -> void:
 func get_grid_value(x: int, y: int) -> int:
 	return grid_cells[x + y * grid_size.x]
 	
+func get_obstacle(x: int, y: int) -> int:
+	return obstacle_cells[x + y * grid_size.x]
+	
 func set_grid_value(x: int, y: int, value: int) -> void:
 	grid_cells[x + y * grid_size.x] = value
 	
@@ -171,8 +185,11 @@ func _draw() -> void:
 		for x in grid_size.x:
 			rect.position = Vector2i(x, y) * GRID_RES
 			var color = Color.from_hsv(float(get_grid_value(x,y))/max_distance, 1, 1, 0.2)
-			draw_rect(rect, color, false)
+			
+			if get_obstacle(x,y):
+				draw_rect(rect, color, true)
+			else: draw_rect(rect, color, false)
 			var line_start := Vector2(x,y) * GRID_RES + Vector2.ONE * GRID_RES * 0.5
-			draw_line(line_start, line_start + get_vector_field_value(x,y) * GRID_RES * 0.5, Color(1.0, 1.0, 1.0, 0.3))
+			draw_line(line_start, line_start + get_vector_field_value(x,y) * GRID_RES * 0.3, Color(1.0, 1.0, 1.0, 0.3))
 			
 			
